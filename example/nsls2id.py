@@ -200,6 +200,18 @@ def chooseBpmCor(ID,userBpm=False):
     for i in range(len(ID.cch)):
         corflds.append([ID,'cch'+'%i'%i])
 
+    # dw in pairs
+    if ID.name.startwith('dw'):
+        loc = ID.name[-1]
+        if ud == 'u':
+            nb = 'd'
+        else:
+            nb = 'u'
+        dwnbName = ID.name[:-1]+nb
+        IDnb = ap.getElements(dwnbName)[0]
+        for i in range(len(IDnb.cch)):
+            corflds.append([IDnb,'cch'+'%i'%i])
+
     return bpmFields, corFields
 
 def switchonFeedback():
