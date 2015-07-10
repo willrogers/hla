@@ -143,7 +143,8 @@ class AbstractElement(object):
         return "%s:%s @ sb=%f" % (self.name, self.family, self.sb)
 
     def __lt__(self, other):
-        """use *index* if not None, otherwise use *sb*"""
+        """Use sb and se for ordering.  Otherwise use index.
+        """
         if self.index is None and other.index is None:
             return True
         elif self.index is None:
@@ -151,6 +152,11 @@ class AbstractElement(object):
         elif other.index is None:
             return True
         elif self.index > 0 and other.index > 0:
+            if self.sb == other.sb:
+                if self.se == other.se:
+                    return self.index < other.index
+                else:
+                    return self.se < other.se
             return self.sb < other.sb
         elif self.index > 0:
             return True
