@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 """
 CA Tools
 ~~~~~~~~
@@ -17,6 +15,8 @@ __all__ = [
     'readPvs', 'measCaRmCol',
     'Timedout', 'CA_OFFLINE', 'FORMAT_TIME'
 ]
+
+import dls_packages
 
 import sys, time, os
 import cothread
