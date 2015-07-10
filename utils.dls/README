@@ -1,0 +1,14 @@
+
+How to load a lattice
+---------------------
+
+ * `mkdir aphla/machines/<ring-mode>`
+ * `cp aphla/machines/SRI21/aphla.ini aphla/machines/<ring-mode>`
+ * `cp aphla/machines/SRI21/data.sqlite3 aphla/machines/<ring-mode>`
+  * this is for the schema; the data will be overwritten
+ * Open Matlab
+ * Start Middlelayer: `middlelayer mode`
+  * Select the mode you want to import
+ * `cd hla/utils.dls`
+ * `load_mml <ring-mode>`
+
