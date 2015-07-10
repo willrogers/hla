@@ -19,8 +19,8 @@ class TestAP(unittest.TestCase):
 
     def test_elements_loaded(self):
         elements = ap.getElements('*')
-        # 2325 in THERING plus DCCT
-        self.assertEqual(len(elements), 2326)
+        # 2405 in THERING plus DCCT
+        self.assertEqual(len(elements), 2406)
 
     def test_quads_loaded(self):
         q = ap.getElements('QUAD')
@@ -78,7 +78,7 @@ class TestAP(unittest.TestCase):
 
     def test_orbit(self):
         orbit = ap.getOrbit(spos=True)
-        self.assertTrue(orbit.shape == (172, 3))
+        self.assertTrue(orbit.shape == (173, 3))
 
     def test_SRI0913(self):
         # SRI0913 loaded by default.
