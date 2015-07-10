@@ -81,6 +81,16 @@ class AbstractElement(object):
         self.se       = float(kwargs.get('se', 'inf'))
         self.sb       = float(kwargs.get('sb', 'inf'))
         self.length   = float(kwargs.get('length', '0.0'))
+        self.k1   = kwargs.get('k1', None)
+        self.k2   = kwargs.get('k2', None)
+        self.angle   = kwargs.get('angle', None)
+        if self.k1 is not None:
+            self.k1 = float(self.k1)
+        if self.k1 is not None:
+            self.k2 = float(self.k2)
+        if self.angle is not None:
+            self.angle = float(self.angle)
+
         self.cell     = kwargs.get('cell', None)
         self.girder   = kwargs.get('girder', None)
         self.symmetry = kwargs.get('symmetry', None)
@@ -133,7 +143,8 @@ class AbstractElement(object):
         return "%s:%s @ sb=%f" % (self.name, self.family, self.sb)
 
     def __lt__(self, other):
-        """use *index* if not None, otherwise use *sb*"""
+        """Use sb and se for ordering.  Otherwise use index.
+        """
         if self.index is None and other.index is None:
             return True
         elif self.index is None:
@@ -141,6 +152,11 @@ class AbstractElement(object):
         elif other.index is None:
             return True
         elif self.index > 0 and other.index > 0:
+            if self.sb == other.sb:
+                if self.se == other.se:
+                    return self.index < other.index
+                else:
+                    return self.se < other.se
             return self.sb < other.sb
         elif self.index > 0:
             return True

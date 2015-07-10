@@ -539,9 +539,6 @@ def createLattice(latname, pvrec, systag, src = 'channelfinder',
         _logger.debug("processing {0}".format(rec))
         # skip if there's no properties.
         if rec[1] is None: continue
-        if rec[0] and systag not in rec[2]:
-            _logger.debug("%s is not tagged '%s'" % (rec[0], systag))
-            continue
         #if rec[1].get("system", "") != latname: continue
         if 'name' not in rec[1]: continue
         #print "PASSED"
