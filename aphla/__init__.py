@@ -49,6 +49,10 @@ def enableLog(f = "aphla.log", level=logging.DEBUG):
 
 #
 
+import pkg_resources
+pkg_resources.require('cothread')
+pkg_resources.require('h5py')
+
 from catools import *
 from chanfinder import *
 import machines

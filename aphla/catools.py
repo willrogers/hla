@@ -16,8 +16,6 @@ __all__ = [
     'Timedout', 'CA_OFFLINE', 'FORMAT_TIME'
 ]
 
-import dls_packages
-
 import sys, time, os
 import cothread
 import cothread.catools as ct
