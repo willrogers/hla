@@ -81,6 +81,16 @@ class AbstractElement(object):
         self.se       = float(kwargs.get('se', 'inf'))
         self.sb       = float(kwargs.get('sb', 'inf'))
         self.length   = float(kwargs.get('length', '0.0'))
+        self.k1   = kwargs.get('k1', None)
+        self.k2   = kwargs.get('k2', None)
+        self.angle   = kwargs.get('angle', None)
+        if self.k1 is not None:
+            self.k1 = float(self.k1)
+        if self.k1 is not None:
+            self.k2 = float(self.k2)
+        if self.angle is not None:
+            self.angle = float(self.angle)
+
         self.cell     = kwargs.get('cell', None)
         self.girder   = kwargs.get('girder', None)
         self.symmetry = kwargs.get('symmetry', None)
