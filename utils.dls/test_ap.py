@@ -2,7 +2,8 @@
 Not really unit tests, but tests to show whether data has
 correctly been loaded into the aphla database.
 """
-import dls_packages
+from pkg_resources import require
+require('cothread')
 from cothread.catools import caget
 import unittest
 import sys
