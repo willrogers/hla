@@ -11,4 +11,5 @@ How to load a lattice
   * Select the mode you want to import
  * `cd hla/utils.dls`
  * `load_mml <ring-mode>`
+ * Commit the new lattice files to Git.
 
