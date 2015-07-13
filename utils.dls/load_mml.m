@@ -1,6 +1,6 @@
 function load_mml(ringmode)
 
-    fprintf('Loading data for ring mode %s', ringmode);
+    fprintf('Loading data for ring mode %s\n', ringmode);
     dir = fileparts(mfilename('fullpath'));
     cd(dir);
 
@@ -28,7 +28,7 @@ function load_mml(ringmode)
 
     % The individual BPM PVs are not stored in middlelayer.
     global BPMS;
-    BPMS = load_bpm_file();
+    BPMS = get_bpm_pvs(ao);
 
     % Map from AT types to types in the accelerator object (ao).
     global TYPE_MAP;
@@ -88,13 +88,22 @@ function insertpvs(index, pvs)
 
 end
 
-function bpms = load_bpm_file()
-    BPMS_FILE = 'data/bpms.txt';
-    fileID = fopen(BPMS_FILE, 'r');
-    formatSpec = '%s';
-    all_bpms = textscan(fileID, formatSpec);
-    fclose(fileID);
-    bpms = all_bpms{1};
+
+% Construct BPM PVs from MML indices
+function bpms = get_bpm_pvs(ao)
+    nbpms = size(ao.BPMx.DeviceList, 1);
+    bpms = cell(nbpms);
+    for i = 1:nbpms
+        ncell = ao.BPMx.DeviceList(i,1);
+        index = ao.BPMx.DeviceList(i,2);
+        if mod(ncell, 1) ~= 0
+            % Indices of .5 correspond to SRnnS-DI-EBPM-nn.
+            ncell = fix(ncell);
+            bpms{i} = sprintf('SR%02dS-DI-EBPM-%02d\n', ncell, index);
+        else
+            bpms{i} = sprintf('SR%02dC-DI-EBPM-%02d\n', ncell, index);
+        end
+    end
 end
 
 
