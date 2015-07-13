@@ -930,10 +930,10 @@ def getOrbit(pat = '', spos = False):
         bpm = machines._lat._find_exact_element(machines.HLA_VBPM)
         n = len(bpm.sb)
         if spos:
-            ret = np.zeros((n, 3), 'd')
+            ret = np.zeros((n, 3), 'O')
             ret[:,2] = bpm.sb
         else:
-            ret = np.zeros((n,2), 'd')
+            ret = np.zeros((n,2), 'O')
         ret[:,0] = bpm.x
         ret[:,1] = bpm.y
         return ret
