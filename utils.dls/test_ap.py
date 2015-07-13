@@ -11,12 +11,12 @@ sys.path.append('..')
 import aphla as ap
 
 
-class TestAP(unittest.TestCase):
-
-    @classmethod
-    def setUpClass(self):
-        ap.machines.load('SRI0913')
-        ap.machines.use('SR')
+class CommonTests(object):
+    """
+    Any tests that apply to all ring modes.
+    This class doesn't inherit from unittest.TestCase since
+    I don't want tests to be run directly.
+    """
 
     def test_elements_loaded(self):
         elements = ap.getElements('*')
@@ -57,11 +57,6 @@ class TestAP(unittest.TestCase):
         q = ap.getElements('QUAD')
         self.assertTrue(hasattr(q[0], 'k1'))
 
-    def test_sext_k_value(self):
-        sexts = ap.getElements('S1D')
-        for s in sexts:
-            self.assertAlmostEqual(s.k2, 6.9)
-
     def test_rf_cavity_loaded(self):
         r = ap.getElements('RF')
         self.assertEqual(len(r), 1)
@@ -75,34 +70,67 @@ class TestAP(unittest.TestCase):
         # Just fetched using channel access.
         current = ap.getCurrent('DCCT')
         ca_current = caget('SR-DI-DCCT-01:SIGNAL')
-        self.assertAlmostEqual(current, ca_current)
+        self.assertAlmostEqual(current, ca_current, 3)
 
     def test_orbit(self):
         orbit = ap.getOrbit(spos=True)
         self.assertTrue(orbit.shape == (173, 3))
 
-    def test_SRI0913(self):
-        # SRI0913 loaded by default.
+    def test_quad_params(self, q1bk):
         q1b = ap.getElements('Q1B')
         for q in q1b:
-            self.assertAlmostEqual(q.k1, -1.2286, 3)
+            self.assertAlmostEqual(q.k1, q1bk, 3)
+
+    def test_sext_params(self, s1dk2):
         s1d = ap.getElements('S1D')
         for s in s1d:
-            self.assertAlmostEqual(s.k2, 6.9, 3)
+            self.assertAlmostEqual(s.k2, s1dk2, 3)
 
-    def test_SRLETHz(self):
-        # SRI0913 loaded by default.
+    def test_ring_length(self):
+        length = sum(e.length for e in ap.getElements('*'))
+        self.assertAlmostEqual(length, 561.6)
+
+class TestSRLETHz(CommonTests, unittest.TestCase):
+
+    @classmethod
+    def setUpClass(cls):
         ap.machines.load('SRLETHz')
         ap.machines.use('SR')
-        q1b = ap.getElements('Q1B')
-        for q in q1b:
-            self.assertAlmostEqual(q.k1, -0.0499, 3)
-        s1d = ap.getElements('S1D')
-        for s in s1d:
-            self.assertAlmostEqual(s.k2, 6.2004, 3)
-        # Back to default.
+
+    def test_quad_params(self):
+        CommonTests.test_quad_params(self, -0.0499)
+
+    def test_sext_params(self):
+        CommonTests.test_sext_params(self, 6.2004)
+
+
+class TestSRI0913(CommonTests, unittest.TestCase):
+
+    @classmethod
+    def setUpClass(cls):
         ap.machines.load('SRI0913')
         ap.machines.use('SR')
+
+    def test_quad_params(self):
+        CommonTests.test_quad_params(self, -1.2286)
+
+    def test_sext_params(self):
+        CommonTests.test_sext_params(self, 6.9)
+
+
+class TestSRI21(CommonTests, unittest.TestCase):
+
+    @classmethod
+    def setUpClass(cls):
+        ap.machines.load('SRI21')
+        ap.machines.use('SR')
+
+    def test_quad_params(self):
+        CommonTests.test_quad_params(self, -1.2149)
+
+    def test_sext_params(self):
+        CommonTests.test_sext_params(self, 6.9)
+
 
 if __name__ == '__main__':
     unittest.main()
