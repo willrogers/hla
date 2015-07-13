@@ -98,6 +98,7 @@ class AbstractElement(object):
         self.flag   = 0
 
         self.group = set([self.family, self.cell, self.girder, self.symmetry])
+        self.group.discard(None)
         for g in kwargs.get('group', []): self.group.add(g)
 
     def profile(self, vscale=1.0):
