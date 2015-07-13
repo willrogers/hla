@@ -17,7 +17,7 @@ function load_mml(ringmode)
 
     % mksqlite library in this repository for now.
     addpath('./mksqlite');
-    DB_FILE = fullfile(machine_dir, 'data.sqlite3');
+    DB_FILE = fullfile(machine_dir, 'data.sqlite');
 
     mksqlite('open', DB_FILE);
     mksqlite('delete from elements');
