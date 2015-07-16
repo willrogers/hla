@@ -90,6 +90,7 @@ class CommonTests(object):
         length = sum(e.length for e in ap.getElements('*'))
         self.assertAlmostEqual(length, 561.6)
 
+
 class TestSRLETHz(CommonTests, unittest.TestCase):
 
     @classmethod
@@ -131,6 +132,49 @@ class TestSRI21(CommonTests, unittest.TestCase):
     def test_sext_params(self):
         CommonTests.test_sext_params(self, 6.9)
 
+
+class TestUnitConv(unittest.TestCase):
+
+    @classmethod
+    def setUpClass(cls):
+        # It shouldn't matter which ring mode we use.
+        ap.machines.load('SRI21')
+        ap.machines.use('SR')
+
+    def testQuadConversion(self):
+        q1d1 = ap.getElements('Q1D')[0]
+        ans = q1d1.convertUnit('b1', 100, None, 'phy')
+        mml_ans = -0.98431858
+        self.assertAlmostEqual(ans, mml_ans, 4)
+
+    def testSextConversion(self):
+        sexts = ['S1A', 'S1B', 'S1C', 'S1D']
+
+        for sext in sexts:
+            s1 = ap.getElements(sext)[0]
+            ans = s1.convertUnit('b2', 10, None, 'phy')
+            mml_ans = 3.23212636
+            self.assertAlmostEqual(ans, mml_ans, 4)
+
+    def testHcorConversion(self):
+        hcors = {0: 0.00020387,
+                 52: 0.00020361,
+                 170: 0.00020339}
+
+        for index, mml_ans in hcors.iteritems():
+            v10 = ap.getElements('VSTR')[index]
+            ans = v10.convertUnit('b0', 1, None, 'phy')
+            self.assertAlmostEqual(ans, mml_ans, 4)
+
+    def testVcorConversion(self):
+        vcors = {0: 0.00203543,
+                 9: 0.0014426,
+                 171: 0.00205298}
+
+        for index, mml_ans in vcors.iteritems():
+            v10 = ap.getElements('VSTR')[index]
+            ans = v10.convertUnit('b0', 10, None, 'phy')
+            self.assertAlmostEqual(ans, mml_ans, 4)
 
 if __name__ == '__main__':
     unittest.main()
