@@ -65,6 +65,9 @@ function load_mml(ringmode)
 
     mksqlite('close');
 
+    % finally, load unit conversion data
+    load_unitconv(ringmode);
+
 end
 
 
