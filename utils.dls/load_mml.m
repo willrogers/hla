@@ -115,12 +115,19 @@ function pvs = getpvs(ao, elm, usedElements)
     type = gettype(elm);
 
     if strcmp(type, 'QUAD') || strcmp(type, 'SEXT') || strcmp(type, 'HSTR') || strcmp(type, 'VSTR')
+        if strcmp(type, 'QUAD')
+            field = 'b1';
+        elseif strcmp(type, 'SEXT')
+            field = 'b2';
+        else
+            field = 'b0';
+        end
         index = usedElements(type);
         family = TYPE_MAP(type);
         get_pv = ao.(family).Monitor.ChannelNames(index, :);
-        gpv = pv_struct(get_pv, 'b1', 'get');
+        gpv = pv_struct(get_pv, field, 'get');
         set_pv = ao.(family).Setpoint.ChannelNames(index, :);
-        spv = pv_struct(set_pv, 'b1', 'put');
+        spv = pv_struct(set_pv, field, 'put');
         pvs = {gpv, spv};
     elseif strcmp(type, 'BPM')
         index = usedElements(type);
