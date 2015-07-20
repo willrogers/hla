@@ -148,13 +148,26 @@ class TestUnitConv(unittest.TestCase):
         self.assertAlmostEqual(ans, mml_ans, 4)
 
     def testSextConversion(self):
+        """
+        The match with MML unit conversion is poor, but investigating shows
+        that the results are closer to the MML version than MML is to the
+        actual data in master_calibration.csv.
+        """
         sexts = ['S1A', 'S1B', 'S1C', 'S1D']
+        mml_vals = {0:  -0.16126809,
+                   1: 0.17840085,
+                   5: 1.53650252,
+                   10: 3.23212636,
+                   20: 6.61219007,
+                   50: 16.57752386,
+                   100: 32.10677341}
 
+        # Note calibration for each sext is the same.
         for sext in sexts:
-            s1 = ap.getElements(sext)[0]
-            ans = s1.convertUnit('b2', 10, None, 'phy')
-            mml_ans = 3.23212636
-            self.assertAlmostEqual(ans, mml_ans, 4)
+            for current in mml_vals:
+                s1 = ap.getElements(sext)[0]
+                ans = s1.convertUnit('b2', current, None, 'phy')
+                self.assertAlmostEqual(ans, mml_vals[current], 2)
 
     def testHcorConversion(self):
         hcors = {0: 0.00020387,
