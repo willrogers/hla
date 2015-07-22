@@ -8,7 +8,7 @@ ini_file = fullfile(dir, '..', 'aphla', 'machines', ringmode, 'unitconv.ini');
 fprintf('Loading unit conversions to file %s\n', ini_file);
 
 quad_families = {'Q1D', 'Q2D', 'Q3D', 'Q2AD', 'Q1AD', 'Q1AB', 'Q2AB', 'Q3B', 'Q2B', 'Q1B', 'QM09', 'QM13'};
-sext_families = {'S1D', 'S2D', 'S2A', 'S1A', 'S2C', 'S1C', 'S1B', 'S2B'};
+sext_families = {'S1A', 'S1B', 'S1C', 'S1D', 'S2A', 'S2B',  'S2C', 'S2D'};
 
 f = fopen(ini_file, 'w');
 
@@ -62,7 +62,7 @@ function write_section(file, group, field, src_unit, dst_unit, coeffs)
 end
 
 
-function coeffs = get_poly_coeffs(family, devices, plot)
+function coeffs = get_poly_coeffs(family, devices, plot_graph)
 
     cal_data = get_cal_data(family);
     current_max = max(cal_data.current);
@@ -81,7 +81,7 @@ function coeffs = get_poly_coeffs(family, devices, plot)
     coeffs = polyfit(range, cal, 4);
     disp(coeffs);
     
-    if plot
+    if plot_graph
         plot(cal_data.current, cal_data.field, 'x');
         hold on
         brho = 10.069;
