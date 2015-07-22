@@ -141,13 +141,13 @@ class TestUnitConv(unittest.TestCase):
         ap.machines.load('SRI21')
         ap.machines.use('SR')
 
-    def testQuadConversion(self):
+    def testQuad(self):
         q1d1 = ap.getElements('Q1D')[0]
         ans = q1d1.convertUnit('b1', 100, None, 'phy')
         mml_ans = -0.98431858
         self.assertAlmostEqual(ans, mml_ans, 4)
 
-    def testSextConversion(self):
+    def testSext(self):
         """
         The match with MML unit conversion is poor, but investigating shows
         that the results are closer to the MML version than MML is to the
@@ -169,7 +169,7 @@ class TestUnitConv(unittest.TestCase):
                 ans = s1.convertUnit('b2', current, None, 'phy')
                 self.assertAlmostEqual(ans, mml_vals[current], 2)
 
-    def testHcorConversion(self):
+    def testHcor(self):
         hcors = {0: 0.00020387,
                  52: 0.00020361,
                  170: 0.00020339}
@@ -179,7 +179,7 @@ class TestUnitConv(unittest.TestCase):
             ans = v10.convertUnit('b0', 1, None, 'phy')
             self.assertAlmostEqual(ans, mml_ans, 4)
 
-    def testVcorConversion(self):
+    def testVcor(self):
         vcors = {0: 0.00203543,
                  9: 0.0014426,
                  171: 0.00205298}
@@ -188,6 +188,17 @@ class TestUnitConv(unittest.TestCase):
             v10 = ap.getElements('VSTR')[index]
             ans = v10.convertUnit('b0', 10, None, 'phy')
             self.assertAlmostEqual(ans, mml_ans, 4)
+
+    def testMinibetaQuad(self):
+        qm09 = ap.getElements('QM09')
+        mml_vals = [0.00595159,
+                    -0.01164893,
+                    0.00557956,
+                    0.00604992]
+        for q, val in zip(qm09, mml_vals):
+            ans = q.convertUnit('b1', 1, None, 'phy')
+            self.assertAlmostEqual(ans, val, 2)
+
 
 if __name__ == '__main__':
     unittest.main()
