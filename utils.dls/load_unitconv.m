@@ -29,20 +29,30 @@ write_section(f, 'BEND', 'b0', 'A', 'rad', coeffs);
 write_section(f, 'BPM', 'x', 'mm', 'm', [0, 0, 0, 0.001, 0]);
 write_section(f, 'BPM', 'y', 'mm', 'm', [0, 0, 0, 0.001, 0]);
 
+% If corrector magnets are windings on a sextupole, their AT Index is that
+% of the sextupole.  We have to reverse that.
+sext_data = getfamilydata('SEXT_');
+sext_indices = sext_data.AT.ATIndex;
+
 hcor = getfamilydata('HCM');
 for i = 1:length(hcor.DeviceList)
-    coeffs = get_poly_coeffs('HCM', [i], false);
-    % ATIndex points at the sextupole; we want the index of the HCM
-    write_section(f, num2str(hcor.AT.ATIndex(i) + 1), 'b0', 'A', 'rad', coeffs);
+    coeffs = get_poly_coeffs('HCM', i, false);
+    hcor_index = hcor.AT.ATIndex(i);
+    if any(hcor_index == sext_indices)
+        hcor_index = hcor_index + 1;
+    end
+    write_section(f, num2str(hcor_index), 'b0', 'A', 'rad', coeffs);
 end
 
 vcor = getfamilydata('VCM');
 for i = 1:length(vcor.DeviceList)
-    coeffs = get_poly_coeffs('VCM', [i], false);
-    % ATIndex points at the sextupole; we want the index of the VCM
-    write_section(f, num2str(vcor.AT.ATIndex(i) + 2), 'b0', 'A', 'rad', coeffs);
+    coeffs = get_poly_coeffs('VCM', i, false);
+    vcor_index = vcor.AT.ATIndex(i);
+    if any(vcor_index == sext_indices)
+        vcor_index = vcor_index + 2;
+    end
+    write_section(f, num2str(vcor_index), 'b0', 'A', 'rad', coeffs);
 end
-
 
 fclose(f);
 
