@@ -11,7 +11,7 @@ e.g., BPM, DCCT, they may be the same as 'phy' unit.
 
 .. code-block:: python
 
-  >>> bpm.get("x", unit=None)  # read bpm "x" with raw unit
+  >>> bpm.get("x", unitsys=None)  # read bpm "x" with raw unit
   >>> bpm.get("x") # read "x" with 'phy' unit
   >>> bpm.x # equivalent to get("x")
 
@@ -31,5 +31,5 @@ To explicitly convert the unit:
 
 .. code-block:: python
 
-  >>> bpm.convert("x", 0.1, None, 'phy') # convert from raw to 'phy'
+  >>> bpm.convertUnit("x", 0.1, None, 'phy') # convert from raw to 'phy'
 
