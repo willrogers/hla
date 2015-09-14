@@ -50,6 +50,10 @@ if not release:
         HG_REVISION = hg_version()
     elif os.path.exists('aphla/version.py'):
         # must be a source distribution, use existing version file
+        # We can't import aphla without these on the path
+        from pkg_resources import require
+        require('cothread')
+        require('h5py')
         from aphla.version import hg_revision as HG_REVISION
     else:
         HG_REVISION = "Unknown"
@@ -85,8 +89,7 @@ setup(
     #    'aphla.gui.orbit', 'aphla.gui.orbitconfdlg',
     #    'aphla.gui.apbba'],
     #    'aphla.gui.channelexplorer',
-    #install_requires = ['distribute', 'matplotlib', 'cothread',
-    #                    'numpy', 'scipy'],
+    install_requires = ['matplotlib', 'cothread', 'h5py', 'scipy'],
     entry_points = {
         'gui_scripts': [
             'mleap = aphla.gui.mleap:main',

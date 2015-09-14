@@ -47,11 +47,6 @@ def enableLog(f = "aphla.log", level=logging.DEBUG):
     _lgh.setFormatter(_lgfmt)
     logging.getLogger('aphla').addHandler(_lgh)
 
-#
-
-import pkg_resources
-pkg_resources.require('cothread')
-pkg_resources.require('h5py')
 
 from catools import *
 from chanfinder import *
