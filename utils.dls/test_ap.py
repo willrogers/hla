@@ -103,16 +103,19 @@ class CommonTests(object):
         self.assertAlmostEqual(length, 561.6)
 
 
-class TestSRLETHz(CommonTests, unittest.TestCase):
+class I0913RingTests(unittest.TestCase):
+
+    def setUp(self):
+        self.nelements = 2406
+        self.nsquads = 96
+
+
+class TestSRLETHz(CommonTests, I0913RingTests):
 
     @classmethod
     def setUpClass(cls):
         ap.machines.load('SRLETHz')
         ap.machines.use('SR')
-
-    def setUp(self):
-        self.nelements = 2428
-        self.nsquads = 96
 
     def test_quad_params(self):
         CommonTests.test_quad_params(self, -0.0499)
@@ -121,16 +124,12 @@ class TestSRLETHz(CommonTests, unittest.TestCase):
         CommonTests.test_sext_params(self, 6.2004)
 
 
-class TestSRI0913(CommonTests, unittest.TestCase):
+class TestSRI0913(CommonTests, I0913RingTests):
 
     @classmethod
     def setUpClass(cls):
         ap.machines.load('SRI0913')
         ap.machines.use('SR')
-
-    def setUp(self):
-        self.nelements = 2428
-        self.nsquads = 96
 
     def test_quad_params(self):
         CommonTests.test_quad_params(self, -1.2286)
@@ -139,7 +138,7 @@ class TestSRI0913(CommonTests, unittest.TestCase):
         CommonTests.test_sext_params(self, 6.9)
 
 
-class TestSRI21(CommonTests, unittest.TestCase):
+class TestSRI21(CommonTests, I0913RingTests):
 
     @classmethod
     def setUpClass(cls):
@@ -147,8 +146,8 @@ class TestSRI21(CommonTests, unittest.TestCase):
         ap.machines.use('SR')
 
     def setUp(self):
-        self.nelements = 2428
-        self.nsquads = 96
+        super(I0913RingTests, self).setUp()
+        self.nelements = 2426
 
     def test_quad_params(self):
         CommonTests.test_quad_params(self, -1.2149)
