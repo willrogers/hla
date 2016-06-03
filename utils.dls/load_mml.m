@@ -12,6 +12,8 @@ function load_mml(ringmode)
         return;
     end
 
+    switch2sim;
+
     % load directly into the ap SQL database
     machine_dir = fullfile(dir, '..', 'aphla', 'machines', ringmode);
 
