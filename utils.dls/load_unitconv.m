@@ -79,12 +79,12 @@ function write_multipole_section(f, family, field, units)
     a = hw2physics(family, 'Monitor', 100, device_list);
     if all(a / a(1) == 1)  % All the magnets in the family have the same
                            % unit conversion.
-        coeffs = get_poly_coeffs(family, 1, false);
+        coeffs = get_linear_coeffs(family, 1, false);
         write_section(f, family, field', 'A', units, coeffs);
     else  % Need unit conversion data for each magnet in the family.
         irregular_mags = getfamilydata(family);
         for j = 1:length(irregular_mags.DeviceList)
-            coeffs = get_poly_coeffs(family, j, false);
+            coeffs = get_linear_coeffs(family, j, false);
             q_index = irregular_mags.AT.ATIndex(j);
             write_section(f, num2str(q_index), field, 'A', units, coeffs);
         end
@@ -92,8 +92,28 @@ function write_multipole_section(f, family, field, units)
 end
 
 
-function coeffs = get_poly_coeffs(family, devices, plot_graph)
+function coeffs = get_linear_coeffs(family, devices, plot_graph)
+    % Manually derive a linear fit by changing the physics value by
+    % a small amount and determining the change in hardware values.
+    % I found this to be closer to the MML behaviour for quadrupoles.
+    DELTA = 0.1; % Hard-code a 'small' value.
+    phys0 = getpv(family, 'Physics', devices);
+    sp0 = getpv(family, 'Hardware', devices);
+    sp1 = sp0 + DELTA;
+    setpv(family, sp1, 'Hardware', devices);
+    phys1 = getpv(family, 'Physics', devices);
+    gradient = (phys1 - phys0) ./ (sp1 - sp0);
+    offset = phys0 - gradient .* sp0;
+    % Return setpoint to initial value.
+    setpv(family, sp0, 'Hardware', devices);
+    zs = zeros(length(phys0), 1);
+    coeffs = [zs zs zs gradient offset];
+end
 
+
+function coeffs = get_poly_coeffs(family, devices, plot_graph)
+    % Create a polynomial directly from the raw calibration data
+    % stored by MML.
     cal_data = get_cal_data(family);
     current_max = max(cal_data.current);
     if current_max < 0
