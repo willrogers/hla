@@ -36,7 +36,7 @@ class CommonTests(object):
 
     def test_bend_loaded(self):
         b = ap.getElements('BEND')
-        self.assertEqual(len(b), 48)
+        self.assertEqual(len(b), self.nbend)
 
     def test_sexts_loaded(self):
         q = ap.getElements('SEXT')
@@ -44,7 +44,7 @@ class CommonTests(object):
         self.assertEqual(q[0].pv(handle='setpoint', field='b2'), ['SR01A-PC-S1D-01:SETI'])
         self.assertEqual(q[-1].pv(handle='readback', field='b2'), ['SR24A-PC-S1D-07:I'])
         self.assertEqual(q[-1].pv(handle='setpoint', field='b2'), ['SR24A-PC-S1D-07:SETI'])
-        self.assertEqual(len(q), 168)
+        self.assertEqual(len(q), self.nsexts)
 
     def test_squads_loaded(self):
         q = ap.getElements('SQUAD')
@@ -62,7 +62,7 @@ class CommonTests(object):
             self.assertEqual(c[0].pv(handle='setpoint'), ['SR01A-PC-{}-01:SETI'.format(device)])
             self.assertEqual(c[-1].pv(handle='readback'), ['SR24A-PC-{}-07:I'.format(device)])
             self.assertEqual(c[-1].pv(handle='setpoint'), ['SR24A-PC-{}-07:SETI'.format(device)])
-            self.assertEqual(len(c), 172)
+            self.assertEqual(len(c), self.ncorrectors)
 
     def test_quad_k_value(self):
         q = ap.getElements('QUAD')
@@ -88,26 +88,31 @@ class CommonTests(object):
         orbit = ap.getOrbit(spos=True)
         self.assertTrue(orbit.shape == (173, 3))
 
-    def test_quad_params(self, q1bk):
+    def check_quad_params(self, q1bk):
         q1b = ap.getElements('Q1B')
         for q in q1b:
             self.assertAlmostEqual(q.k1, q1bk, 3)
 
-    def test_sext_params(self, s1dk2):
+    def check_sext_params(self, s1dk2):
         s1d = ap.getElements('S1D')
         for s in s1d:
             self.assertAlmostEqual(s.k2, s1dk2, 3)
 
     def test_ring_length(self):
         length = sum(e.length for e in ap.getElements('*'))
-        self.assertAlmostEqual(length, 561.6)
+        self.assertAlmostEqual(length, self.ring_length)
 
 
 class I0913RingTests(unittest.TestCase):
 
     def setUp(self):
         self.nelements = 2406
+        self.ring_length = 561.6
+        self.nelements = 2428
+        self.nbend = 48
+        self.ncorrectors = 172
         self.nsquads = 96
+        self.nsexts = 168
 
 
 class TestSRLETHz(CommonTests, I0913RingTests):
@@ -118,10 +123,10 @@ class TestSRLETHz(CommonTests, I0913RingTests):
         ap.machines.use('SR')
 
     def test_quad_params(self):
-        CommonTests.test_quad_params(self, -0.0499)
+        CommonTests.check_quad_params(self, -0.0499)
 
     def test_sext_params(self):
-        CommonTests.test_sext_params(self, 6.2004)
+        CommonTests.check_sext_params(self, 6.2004)
 
 
 class TestSRI0913(CommonTests, I0913RingTests):
@@ -132,10 +137,10 @@ class TestSRI0913(CommonTests, I0913RingTests):
         ap.machines.use('SR')
 
     def test_quad_params(self):
-        CommonTests.test_quad_params(self, -1.2286)
+        CommonTests.check_quad_params(self, -1.2286)
 
     def test_sext_params(self):
-        CommonTests.test_sext_params(self, 6.9)
+        CommonTests.check_sext_params(self, 6.9)
 
 
 class TestSRI21(CommonTests, I0913RingTests):
@@ -146,14 +151,30 @@ class TestSRI21(CommonTests, I0913RingTests):
         ap.machines.use('SR')
 
     def setUp(self):
-        super(I0913RingTests, self).setUp()
-        self.nelements = 2426
+        super(TestSRI21, self).setUp()
+        self.nelements = 2428
 
     def test_quad_params(self):
-        CommonTests.test_quad_params(self, -1.2149)
+        CommonTests.check_quad_params(self, -1.2149)
 
     def test_sext_params(self):
-        CommonTests.test_sext_params(self, 6.9)
+        CommonTests.check_sext_params(self, 6.9)
+
+
+class TestVMX(CommonTests, unittest.TestCase):
+
+    @classmethod
+    def setUpClass(cls):
+        ap.machines.load('VMX')
+        ap.machines.use('SR')
+
+    def setUp(self):
+        self.nelements = 2476
+        self.ring_length = 561.571
+        self.nbend = 50
+        self.ncorrectors = 173
+        self.nsquads = 98
+        self.nsexts = 171
 
 
 class TestUnitConv(unittest.TestCase):
