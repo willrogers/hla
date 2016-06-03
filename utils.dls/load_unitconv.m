@@ -29,8 +29,13 @@ end
 write_section(f, 'BPM', 'x', 'mm', 'm', [0, 0, 0, 0.001, 0]);
 write_section(f, 'BPM', 'y', 'mm', 'm', [0, 0, 0, 0.001, 0]);
 
+% The skew quadrupoles are windings on the sextupoles, but there is no
+% separate element so this works correctly (see below).
+write_multipole_section(f, 'SQUAD', 'a1', 'm^-2');
+
 % If corrector magnets are windings on a sextupole, their AT Index is that
-% of the sextupole.  We have to reverse that.
+% of the sextupole whereas there is a separate element for those magnets.
+% We have to use the index of the separate elements instead.
 sext_data = getfamilydata('SEXT_');
 sext_indices = sext_data.AT.ATIndex;
 

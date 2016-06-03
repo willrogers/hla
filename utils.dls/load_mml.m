@@ -58,6 +58,14 @@ function load_mml(ringmode)
         insertpvs(i, pvs);
     end
 
+    % Skew quadrupole PVs are added to sextupoles and do not have their
+    % own elements.  We insert their PVs separately.
+    squads = getfamilydata('SQUAD');
+    for i = 1:length(squads.AT.ATIndex)
+        pvs = getsquadpvs(ao, i);
+        insertpvs(squads.AT.ATIndex(i), pvs);
+    end
+
     % DCCT not in THERING.
     dcct = struct ('FamName', 'DCCT', 'Length', 0);
     i = i + 1;
@@ -154,6 +162,13 @@ function pvs = getpvs(ao, elm, usedElements)
 
 end
 
+function pvs = getsquadpvs(ao, index)
+    get_pv = ao.SQUAD.Monitor.ChannelNames(index, :);
+    gpv = pv_struct(get_pv, 'a1', 'get');
+    set_pv = ao.SQUAD.Setpoint.ChannelNames(index, :);
+    spv = pv_struct(set_pv, 'a1', 'put');
+    pvs = {gpv, spv};
+end
 
 function s = pv_struct(pv, field, handle)
     s = struct('pv', pv, 'field', field, 'handle', handle);
@@ -164,6 +179,11 @@ function insertelement(i, elm, s)
     k1 = 0;
     k2 = 0;
     type = gettype(elm);
+    groups = elm.FamName;
+    % These families of sexts contain the skew quadrupoles.
+    if any(ismember(groups, {'S1B', 'S1C', 'S1D', 'S2A'}))
+        groups = strcat(groups, ';SQUAD');
+    end
 
     if strcmp(type, 'QUAD')
         k1 = elm.K;
@@ -174,6 +194,6 @@ function insertelement(i, elm, s)
     elseif strcmp(type, 'BEND' ) && any(elm.PolynomB)
         k1 = elm.K;
     end
-    mksqlite(INSERT_ELEMENT, num2str(i), elm.Length, s, num2str(i), type, elm.FamName, k1, k2, 0);
+    mksqlite(INSERT_ELEMENT, num2str(i), elm.Length, s, num2str(i), type, groups, k1, k2, 0);
 end
 
