@@ -4,6 +4,7 @@ correctly been loaded into the aphla database.
 """
 from pkg_resources import require
 require('cothread')
+require('h5py')
 from cothread.catools import caget
 import unittest
 import sys
@@ -20,8 +21,7 @@ class CommonTests(object):
 
     def test_elements_loaded(self):
         elements = ap.getElements('*')
-        # 2405 in THERING plus DCCT
-        self.assertEqual(len(elements), 2406)
+        self.assertEqual(len(elements), self.nelements)
 
     def test_quads_loaded(self):
         q = ap.getElements('QUAD')
@@ -37,11 +37,19 @@ class CommonTests(object):
 
     def test_sexts_loaded(self):
         q = ap.getElements('SEXT')
-        self.assertEqual(q[0].pv(handle='readback'), ['SR01A-PC-S1D-01:I'])
-        self.assertEqual(q[0].pv(handle='setpoint'), ['SR01A-PC-S1D-01:SETI'])
-        self.assertEqual(q[-1].pv(handle='readback'), ['SR24A-PC-S1D-07:I'])
-        self.assertEqual(q[-1].pv(handle='setpoint'), ['SR24A-PC-S1D-07:SETI'])
+        self.assertEqual(q[0].pv(handle='readback', field='b2'), ['SR01A-PC-S1D-01:I'])
+        self.assertEqual(q[0].pv(handle='setpoint', field='b2'), ['SR01A-PC-S1D-01:SETI'])
+        self.assertEqual(q[-1].pv(handle='readback', field='b2'), ['SR24A-PC-S1D-07:I'])
+        self.assertEqual(q[-1].pv(handle='setpoint', field='b2'), ['SR24A-PC-S1D-07:SETI'])
         self.assertEqual(len(q), 168)
+
+    def test_squads_loaded(self):
+        q = ap.getElements('SQUAD')
+        self.assertEqual(q[0].pv(handle='readback', field='a1'), ['SR01A-PC-SQUAD-01:I'])
+        self.assertEqual(q[0].pv(handle='setpoint', field='a1'), ['SR01A-PC-SQUAD-01:SETI'])
+        self.assertEqual(q[-1].pv(handle='readback', field='a1'), ['SR24A-PC-SQUAD-04:I'])
+        self.assertEqual(q[-1].pv(handle='setpoint', field='a1'), ['SR24A-PC-SQUAD-04:SETI'])
+        self.assertEqual(len(q), self.nsquads)
 
     def test_correctors_loaded(self):
         for plane in ('H', 'V'):
@@ -98,6 +106,10 @@ class TestSRLETHz(CommonTests, unittest.TestCase):
         ap.machines.load('SRLETHz')
         ap.machines.use('SR')
 
+    def setUp(self):
+        self.nelements = 2428
+        self.nsquads = 96
+
     def test_quad_params(self):
         CommonTests.test_quad_params(self, -0.0499)
 
@@ -112,6 +124,10 @@ class TestSRI0913(CommonTests, unittest.TestCase):
         ap.machines.load('SRI0913')
         ap.machines.use('SR')
 
+    def setUp(self):
+        self.nelements = 2428
+        self.nsquads = 96
+
     def test_quad_params(self):
         CommonTests.test_quad_params(self, -1.2286)
 
@@ -125,6 +141,10 @@ class TestSRI21(CommonTests, unittest.TestCase):
     def setUpClass(cls):
         ap.machines.load('SRI21')
         ap.machines.use('SR')
+
+    def setUp(self):
+        self.nelements = 2428
+        self.nsquads = 96
 
     def test_quad_params(self):
         CommonTests.test_quad_params(self, -1.2149)
