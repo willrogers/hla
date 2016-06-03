@@ -5,11 +5,14 @@ correctly been loaded into the aphla database.
 from pkg_resources import require
 require('cothread')
 require('h5py')
-from cothread.catools import caget
+require('mock')
+import cothread
 import unittest
+import mock
 import sys
 sys.path.append('..')
 import aphla as ap
+
 
 
 class CommonTests(object):
@@ -75,10 +78,11 @@ class CommonTests(object):
                          ['LI-RF-MOSC-01:FREQ_SET'])
 
     def test_current(self):
-        # Just fetched using channel access.
-        current = ap.getCurrent('DCCT')
-        ca_current = caget('SR-DI-DCCT-01:SIGNAL')
-        self.assertAlmostEqual(current, ca_current, 3)
+        tmp = cothread.catools.caget
+        mock_caget = mock.MagicMock()
+        cothread.catools.caget = mock_caget
+        mock_caget.assertCalledWith('SR-DI-DCCT-01:SIGNAL')
+        cothread.catools.caget = tmp
 
     def test_orbit(self):
         orbit = ap.getOrbit(spos=True)
