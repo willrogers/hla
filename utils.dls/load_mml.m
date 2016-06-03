@@ -180,8 +180,10 @@ function insertelement(i, elm, s)
     k2 = 0;
     type = gettype(elm);
     groups = elm.FamName;
-    % These families of sexts contain the skew quadrupoles.
-    if any(ismember(groups, {'S1B', 'S1C', 'S1D', 'S2A'}))
+
+    % Sexts with squads require an extra group added.
+    squads = getfamilydata('SQUAD');
+    if ismember(i, squads.AT.ATIndex)
         groups = strcat(groups, ';SQUAD');
     end
 
