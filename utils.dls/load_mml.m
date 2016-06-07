@@ -127,7 +127,7 @@ function pvs = getpvs(ao, elm, usedElements)
 
     type = gettype(elm);
 
-    if strcmp(type, 'QUAD') || strcmp(type, 'SEXT') || strcmp(type, 'HSTR') || strcmp(type, 'VSTR')
+    if any(ismember(type, TYPE_MAP.keys))
         if strcmp(type, 'QUAD')
             field = 'b1';
         elseif strcmp(type, 'SEXT')
@@ -193,7 +193,7 @@ function insertelement(i, elm, s)
     elseif strcmp(type, 'SEXT')
         k2 = elm.PolynomB(3);
         k1 = 0;
-    elseif strcmp(type, 'BEND' ) && any(elm.PolynomB)
+    elseif strcmp(type, 'BEND') && any(elm.PolynomB)
         k1 = elm.K;
     end
     mksqlite(INSERT_ELEMENT, num2str(i), elm.Length, s, num2str(i), type, groups, k1, k2, 0);
