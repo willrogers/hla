@@ -26,42 +26,41 @@ class CommonTests(object):
         elements = ap.getElements('*')
         self.assertEqual(len(elements), self.nelements)
 
+    def check_mag_pvs(self, element, field, prefix):
+        self.assertEqual(element.pv(handle='readback', field=field),
+                         ['{}:I'.format(prefix)])
+        self.assertEqual(element.pv(handle='setpoint', field=field),
+                         ['{}:SETI'.format(prefix)])
+
     def test_quads_loaded(self):
         q = ap.getElements('QUAD')
-        self.assertEqual(q[0].pv(handle='readback'), ['SR01A-PC-Q1D-01:I'])
-        self.assertEqual(q[0].pv(handle='setpoint'), ['SR01A-PC-Q1D-01:SETI'])
-        self.assertEqual(q[-1].pv(handle='readback'), ['SR24A-PC-Q1D-10:I'])
-        self.assertEqual(q[-1].pv(handle='setpoint'), ['SR24A-PC-Q1D-10:SETI'])
+        self.check_mag_pvs(q[0], 'b1', 'SR01A-PC-Q1D-01')
+        self.check_mag_pvs(q[-1], 'b1', 'SR24A-PC-Q1D-10')
         self.assertEqual(len(q), 248)
 
     def test_bend_loaded(self):
         b = ap.getElements('BEND')
+        self.check_mag_pvs(b[0], 'b0', 'SR-PC-DIPOL-01')
         self.assertEqual(len(b), self.nbend)
 
     def test_sexts_loaded(self):
         s = ap.getElements('SEXT')
-        self.assertEqual(s[0].pv(handle='readback', field='b2'), ['SR01A-PC-S1D-01:I'])
-        self.assertEqual(s[0].pv(handle='setpoint', field='b2'), ['SR01A-PC-S1D-01:SETI'])
-        self.assertEqual(s[-1].pv(handle='readback', field='b2'), ['SR24A-PC-S1D-07:I'])
-        self.assertEqual(s[-1].pv(handle='setpoint', field='b2'), ['SR24A-PC-S1D-07:SETI'])
+        self.check_mag_pvs(s[0], 'b2', 'SR01A-PC-S1D-01')
+        self.check_mag_pvs(s[-1], 'b2', 'SR24A-PC-S1D-07')
         self.assertEqual(len(s), self.nsexts)
 
     def test_squads_loaded(self):
         sq = ap.getElements('SQUAD')
-        self.assertEqual(sq[0].pv(handle='readback', field='a1'), ['SR01A-PC-SQUAD-01:I'])
-        self.assertEqual(sq[0].pv(handle='setpoint', field='a1'), ['SR01A-PC-SQUAD-01:SETI'])
-        self.assertEqual(sq[-1].pv(handle='readback', field='a1'), ['SR24A-PC-SQUAD-04:I'])
-        self.assertEqual(sq[-1].pv(handle='setpoint', field='a1'), ['SR24A-PC-SQUAD-04:SETI'])
+        self.check_mag_pvs(sq[0], 'a1', 'SR01A-PC-SQUAD-01')
+        self.check_mag_pvs(sq[-1], 'a1', 'SR24A-PC-SQUAD-04')
         self.assertEqual(len(sq), self.nsquads)
 
     def test_correctors_loaded(self):
         for plane in ('H', 'V'):
             device = '{}STR'.format(plane)
             c = ap.getElements(device)
-            self.assertEqual(c[0].pv(handle='readback'), ['SR01A-PC-{}-01:I'.format(device)])
-            self.assertEqual(c[0].pv(handle='setpoint'), ['SR01A-PC-{}-01:SETI'.format(device)])
-            self.assertEqual(c[-1].pv(handle='readback'), ['SR24A-PC-{}-07:I'.format(device)])
-            self.assertEqual(c[-1].pv(handle='setpoint'), ['SR24A-PC-{}-07:SETI'.format(device)])
+            self.check_mag_pvs(c[0], 'b0', 'SR01A-PC-{}-01'.format(device))
+            self.check_mag_pvs(c[-1], 'b0', 'SR24A-PC-{}-07'.format(device))
             self.assertEqual(len(c), self.ncorrectors)
 
     def test_quad_k_value(self):
@@ -106,9 +105,8 @@ class CommonTests(object):
 class I0913RingTests(unittest.TestCase):
 
     def setUp(self):
-        self.nelements = 2406
         self.ring_length = 561.6
-        self.nelements = 2428
+        self.nelements = 2429
         self.nbend = 48
         self.ncorrectors = 172
         self.nsquads = 96
@@ -152,7 +150,6 @@ class TestSRI21(CommonTests, I0913RingTests):
 
     def setUp(self):
         super(TestSRI21, self).setUp()
-        self.nelements = 2428
 
     def test_quad_params(self):
         CommonTests.check_quad_params(self, -1.2149)
@@ -169,12 +166,17 @@ class TestVMX(CommonTests, unittest.TestCase):
         ap.machines.use('SR')
 
     def setUp(self):
-        self.nelements = 2476
+        self.nelements = 2477
         self.ring_length = 561.571
         self.nbend = 50
         self.ncorrectors = 173
         self.nsquads = 98
         self.nsexts = 171
+
+    def test_dipole_trims_loaded(self):
+        s = ap.getElements('BBVMXS')
+        self.check_mag_pvs(s[0], 'db0', 'SR02A-PC-DTRIM-01')
+        self.assertEqual(len(s), 2)
 
 
 class TestUnitConv(unittest.TestCase):
