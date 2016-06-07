@@ -34,8 +34,8 @@ function load_mml(ringmode)
 
     % Map from AT types to types in the accelerator object (ao).
     global TYPE_MAP;
-    keys = {'QUAD', 'SEXT', 'VSTR', 'HSTR'};
-    values = {'QUAD_', 'SEXT_', 'VCM', 'HCM'};
+    keys = {'QUAD', 'SEXT', 'VSTR', 'HSTR', 'BEND'};
+    values = {'QUAD_', 'SEXT_', 'VCM', 'HCM', 'BB'};
     TYPE_MAP = containers.Map(keys, values);
 
     usedElements = containers.Map();
@@ -58,13 +58,11 @@ function load_mml(ringmode)
         insertpvs(i, pvs);
     end
 
-    % Skew quadrupole PVs are added to sextupoles and do not have their
+    % The following families  and do not have their
     % own elements.  We insert their PVs separately.
-    squads = getfamilydata('SQUAD');
-    for i = 1:length(squads.AT.ATIndex)
-        pvs = getsquadpvs(ao, i);
-        insertpvs(squads.AT.ATIndex(i), pvs);
-    end
+    insertextrapvs('SQUAD', 'a1');
+    insertextrapvs('BBVMXS', 'db0');
+    insertextrapvs('BBVMXL', 'db0');
 
     % DCCT not in THERING.
     dcct = struct ('FamName', 'DCCT', 'Length', 0);
@@ -135,8 +133,15 @@ function pvs = getpvs(ao, elm, usedElements)
         else
             field = 'b0';
         end
+        % MML is inconsistent about whether the family for the bends
+        % is BEND or BB.
+        if strcmp(type, 'BEND') && isfield(ao, 'BEND')
+            family = 'BEND';
+        else
+            family = TYPE_MAP(type);
+        end
         index = usedElements(type);
-        family = TYPE_MAP(type);
+
         get_pv = ao.(family).Monitor.ChannelNames(index, :);
         gpv = pv_struct(get_pv, field, 'get');
         set_pv = ao.(family).Setpoint.ChannelNames(index, :);
@@ -162,12 +167,17 @@ function pvs = getpvs(ao, elm, usedElements)
 
 end
 
-function pvs = getsquadpvs(ao, index)
-    get_pv = ao.SQUAD.Monitor.ChannelNames(index, :);
-    gpv = pv_struct(get_pv, 'a1', 'get');
-    set_pv = ao.SQUAD.Setpoint.ChannelNames(index, :);
-    spv = pv_struct(set_pv, 'a1', 'put');
-    pvs = {gpv, spv};
+function insertextrapvs(family, field)
+    elms = getfamilydata(family);
+    if ~isempty(elms)
+        for i = 1:length(elms.AT.ATIndex)
+            get_pv = elms.Monitor.ChannelNames(i,:);
+            gpv = pv_struct(get_pv, field, 'get');
+            set_pv = elms.Setpoint.ChannelNames(i,:);
+            spv = pv_struct(set_pv, field, 'put');
+            insertpvs(elms.AT.ATIndex(i), {gpv, spv});
+        end
+    end
 end
 
 function s = pv_struct(pv, field, handle)
@@ -181,10 +191,14 @@ function insertelement(i, elm, s)
     type = gettype(elm);
     groups = elm.FamName;
 
-    % Sexts with squads require an extra group added.
-    squads = getfamilydata('SQUAD');
-    if ismember(i, squads.AT.ATIndex)
-        groups = strcat(groups, ';SQUAD');
+    % Elements with additional PVs require an extra group added.
+    extra_groups = {'SQUAD', 'BBVMXS', 'BBVMXL'};
+    for j = 1:length(extra_groups)
+        group = extra_groups{j};
+        elms = getfamilydata(group);
+        if ~isempty(elms) && ismember(i, elms.AT.ATIndex)
+            groups = strcat(groups, ';', group);
+        end
     end
 
     if strcmp(type, 'QUAD')
