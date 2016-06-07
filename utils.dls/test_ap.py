@@ -39,20 +39,20 @@ class CommonTests(object):
         self.assertEqual(len(b), self.nbend)
 
     def test_sexts_loaded(self):
-        q = ap.getElements('SEXT')
-        self.assertEqual(q[0].pv(handle='readback', field='b2'), ['SR01A-PC-S1D-01:I'])
-        self.assertEqual(q[0].pv(handle='setpoint', field='b2'), ['SR01A-PC-S1D-01:SETI'])
-        self.assertEqual(q[-1].pv(handle='readback', field='b2'), ['SR24A-PC-S1D-07:I'])
-        self.assertEqual(q[-1].pv(handle='setpoint', field='b2'), ['SR24A-PC-S1D-07:SETI'])
-        self.assertEqual(len(q), self.nsexts)
+        s = ap.getElements('SEXT')
+        self.assertEqual(s[0].pv(handle='readback', field='b2'), ['SR01A-PC-S1D-01:I'])
+        self.assertEqual(s[0].pv(handle='setpoint', field='b2'), ['SR01A-PC-S1D-01:SETI'])
+        self.assertEqual(s[-1].pv(handle='readback', field='b2'), ['SR24A-PC-S1D-07:I'])
+        self.assertEqual(s[-1].pv(handle='setpoint', field='b2'), ['SR24A-PC-S1D-07:SETI'])
+        self.assertEqual(len(s), self.nsexts)
 
     def test_squads_loaded(self):
-        q = ap.getElements('SQUAD')
-        self.assertEqual(q[0].pv(handle='readback', field='a1'), ['SR01A-PC-SQUAD-01:I'])
-        self.assertEqual(q[0].pv(handle='setpoint', field='a1'), ['SR01A-PC-SQUAD-01:SETI'])
-        self.assertEqual(q[-1].pv(handle='readback', field='a1'), ['SR24A-PC-SQUAD-04:I'])
-        self.assertEqual(q[-1].pv(handle='setpoint', field='a1'), ['SR24A-PC-SQUAD-04:SETI'])
-        self.assertEqual(len(q), self.nsquads)
+        sq = ap.getElements('SQUAD')
+        self.assertEqual(sq[0].pv(handle='readback', field='a1'), ['SR01A-PC-SQUAD-01:I'])
+        self.assertEqual(sq[0].pv(handle='setpoint', field='a1'), ['SR01A-PC-SQUAD-01:SETI'])
+        self.assertEqual(sq[-1].pv(handle='readback', field='a1'), ['SR24A-PC-SQUAD-04:I'])
+        self.assertEqual(sq[-1].pv(handle='setpoint', field='a1'), ['SR24A-PC-SQUAD-04:SETI'])
+        self.assertEqual(len(sq), self.nsquads)
 
     def test_correctors_loaded(self):
         for plane in ('H', 'V'):
