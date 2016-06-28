@@ -12,6 +12,11 @@
 # serve to show the default.
 
 import sys, os, glob, re
+from pkg_resources import require
+require('cothread')
+require('h5py')
+require('matplotlib')
+sys.path.append('..')
 import aphla
 
 # If extensions (or modules to document with autodoc) are in another directory,
@@ -33,7 +38,7 @@ extensions = ['matplotlib.sphinxext.mathmpl',
               'sphinx.ext.doctest',
               'sphinx.ext.autosummary',
               'ipython_console_highlighting',
-              'inheritance_diagram',
+              'sphinx.ext.inheritance_diagram',
               'numpydoc']
 
 autosummary_generate = glob.glob('*.rst')
