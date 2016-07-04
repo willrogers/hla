@@ -177,6 +177,9 @@ class TestVMX(CommonTests, unittest.TestCase):
         s = ap.getElements('BBVMXS')
         self.check_mag_pvs(s[0], 'db0', 'SR02A-PC-DTRIM-01')
         self.assertEqual(len(s), 2)
+        s = ap.getElements('BBVMXL')
+        self.check_mag_pvs(s[0], 'db0', 'SR02A-PC-DTRIM-02')
+        self.assertEqual(len(s), 2)
 
 
 class TestUnitConv(unittest.TestCase):
