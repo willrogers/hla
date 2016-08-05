@@ -1406,7 +1406,7 @@ def calcBetaBeatRm(bpms, quads, **kwargs):
 
     db/b is measured at BPMs.
 
-    db/b = -\sum dkl_j*\beta_j\cos(2\nu_0(\pi+phi_i-phi_j)
+    db/b = -\sum dkl_j*\\beta_j\cos(2\\nu_0(\pi+phi_i-phi_j)
 
     where phi_i is the phase normalized within 2\pi range.
 

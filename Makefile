@@ -6,6 +6,10 @@ MODULEVER=0.0
 # Override with any release info
 -include Makefile.private
 
+.PHONY: default
+
+default: dist html
+
 dist: setup.py
 	MODULEVER=$(MODULEVER) $(PYTHON) setup.py bdist_egg
 	touch dist
