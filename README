@@ -1,27 +1,9 @@
-test
-====
+This repo was copied from the Github nsls2ap organisation.  That repo
+has now disappeared, and there is no licence, so we are unsure of its
+status.
 
-- nosetests -s -x aphla/tests/test_nsls2v2.py:Test0Element
-- nosetests -v -e 'test_.*[a-z1-9]$' -s -x aphla/tests/test_nsls2v2.py
+There are several directories that have been deleted that may contain
+useful snippets in future:
 
-build/install
-==============
-
-- python2.6 setup.py bdist_egg
-- python2.7 setup.py bdist_egg
-- python setup.py --command-packages=stdeb.command bdist_deb
-
-
-Replease
-=========
-
-- setup.py: check version, module/package
-- lib/__init__.py: check __version__
-- doc/conf.py: version
-- doc/history.rst
-- ChangeLog
-- doc/_template/index.html
-- './update-lsasd2.sh' to upload doc
-- upload egg file
-
-
+* mml
+* machine_data
