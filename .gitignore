@@ -9,3 +9,11 @@ _build/
 aphla.egg-info
 doc/generated
 doc/_build
+
+# Temporary files
+*~
+*.swp
+*.swo
+
+# pytest cache
+.cache

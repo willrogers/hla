@@ -21,4 +21,4 @@ learning how to use aphla, see also :ref:`userguide` or :ref:`tutorial`
 .. toctree::
    :maxdepth: 3
 
-   apidoc/modules.rst
+   generated/modules.rst
