@@ -46,7 +46,7 @@ function load_mml(ringmode)
         disp(i);
         elm = THERING{i};
         s = s + elm.Length;
-        insertelement(i, elm, s);
+        insertelement(i, elm, s, ringmode);
 
         type = gettype(elm);
         if usedElements.isKey(type)
@@ -67,7 +67,7 @@ function load_mml(ringmode)
     % DCCT not in THERING.
     dcct = struct ('FamName', 'DCCT', 'Length', 0);
     i = i + 1;
-    insertelement(i, dcct, 0);
+    insertelement(i, dcct, 0, ringmode);
     s = pv_struct('SR-DI-DCCT-01:SIGNAL', 'I', 'get');
     insertpvs(i, {s});
 
@@ -184,12 +184,13 @@ function s = pv_struct(pv, field, handle)
     s = struct('pv', pv, 'field', field, 'handle', handle);
 end
 
-function insertelement(i, elm, s)
-    INSERT_ELEMENT = 'insert into elements (elemName, elemLength, elemPosition, elemIndex, elemType, elemGroups, k1, k2, virtual) values (?,?,?,?,?,?,?,?,?)';
+function insertelement(i, elm, s, ringmode)
+    INSERT_ELEMENT = 'insert into elements (elemName, elemLength, elemPosition, elemIndex, elemType, elemGroups, cell, k1, k2, virtual) values (?,?,?,?,?,?,?,?,?,?)';
     k1 = 0;
     k2 = 0;
     type = gettype(elm);
     groups = elm.FamName;
+    cell = getcell(s, ringmode);
 
     % Elements with additional PVs require an extra group added.
     extra_groups = {'SQUAD', 'BBVMXS', 'BBVMXL'};
@@ -210,6 +211,26 @@ function insertelement(i, elm, s)
     elseif strcmp(type, 'BEND') && any(elm.PolynomB)
         k1 = elm.K;
     end
-    mksqlite(INSERT_ELEMENT, num2str(i), elm.Length, s, num2str(i), type, groups, k1, k2, 0);
+    mksqlite(INSERT_ELEMENT, num2str(i), elm.Length, s, num2str(i), type, groups, cell, k1, k2, 0);
 end
 
+function cell = getcell(position, ringmode)
+    % Hard-coded values here - I can't see a better way to do this.
+    oldcircumference = 561.6;
+    newcircumference = 561.571;
+    cell2diff = oldcircumference - newcircumference;
+    boundaries = linspace(0, 561.6, 25);
+    if is_ddba(ringmode)
+        boundaries(3:end) = boundaries(3:end) - cell2diff;
+    end
+    for c = 1:length(boundaries)
+        if position < boundaries(c)
+            cell = c - 1;
+            break
+        end
+    end
+end
+
+function is_ddba = is_ddba(ringmode)
+    is_ddba = strcmp(ringmode, 'VMX') || strcmp(ringmode , 'VMXSP');
+end
