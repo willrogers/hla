@@ -10,6 +10,7 @@ import cothread
 import unittest
 import mock
 import sys
+import re
 sys.path.append('..')
 import aphla as ap
 
@@ -31,6 +32,29 @@ class CommonTests(object):
                          ['{}:I'.format(prefix)])
         self.assertEqual(element.pv(handle='setpoint', field=field),
                          ['{}:SETI'.format(prefix)])
+
+    def test_element_cell_loaded(self):
+        """
+        For each element:
+            its cell is an integer
+            that integer increases around the ring
+            if the element has any PVs, the first integer should match the cell.
+        """
+        elements = ap.getElements('*')
+        for element in elements:
+            self.assertTrue(isinstance(element.cell, str))
+            intcell = int(float(element.cell))
+            self.assertTrue(1 <= intcell <= 24)
+            for pv in element.pv():
+                if re.match('..[0-9][0-9]', pv):
+                    pv_cell = int(pv[2:4])
+                    # Sometimes these 'S' elements are in the wrong cell
+                    # mathematically.  I'll accept this for now.
+                    if '09S' in pv or '13S' in pv:
+                        print(pv, pv_cell, intcell)
+                        self.assertTrue(pv_cell in (intcell, intcell + 1))
+                    else:
+                        self.assertEqual(pv_cell, intcell)
 
     def test_quads_loaded(self):
         q = ap.getElements('QUAD')
