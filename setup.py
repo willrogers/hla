@@ -90,16 +90,6 @@ setup(
     #    'aphla.gui.apbba'],
     #    'aphla.gui.channelexplorer',
     install_requires = ['matplotlib', 'cothread', 'h5py', 'scipy'],
-    entry_points = {
-        'gui_scripts': [
-            'mleap = aphla.gui.mleap:main',
-            'apbba = aphla.gui.apbba:main',
-            'aplauncher = aphla.gui.aplauncher:main',
-            'apcurrentmonitor = aphla.gui.apcurrentmonitor:main',
-            'apchx = aphla.gui.channelexplorer:main',
-            'aptinker = aphla.gui.aptinker:main'
-            ]
-        },
     description = "Accelerator control and experiment toolkit",
     author = "Lingyun Yang, Yoshiteru Hidaka",
     maintainer = "Lingyun Yang",
