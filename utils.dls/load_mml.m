@@ -190,7 +190,7 @@ function insertelement(i, elm, s, ringmode)
     k2 = 0;
     type = gettype(elm);
     groups = elm.FamName;
-    cell = getcell(s, ringmode);
+    cell = sprintf('%d', getcell(s, ringmode));
 
     % Elements with additional PVs require an extra group added.
     extra_groups = {'SQUAD', 'BBVMXS', 'BBVMXL'};
