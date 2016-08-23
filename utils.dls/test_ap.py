@@ -43,18 +43,18 @@ class CommonTests(object):
         elements = ap.getElements('*')
         for element in elements:
             self.assertTrue(isinstance(element.cell, str))
-            intcell = int(float(element.cell))
-            self.assertTrue(1 <= intcell <= 24)
+            int_cell = int(element.cell)
+            self.assertTrue(1 <= int_cell <= 24)
+            self.assertTrue(element.cell in element.group)
             for pv in element.pv():
                 if re.match('..[0-9][0-9]', pv):
                     pv_cell = int(pv[2:4])
                     # Sometimes these 'S' elements are in the wrong cell
                     # mathematically.  I'll accept this for now.
                     if '09S' in pv or '13S' in pv:
-                        print(pv, pv_cell, intcell)
-                        self.assertTrue(pv_cell in (intcell, intcell + 1))
+                        self.assertTrue(pv_cell in (int_cell, int_cell + 1))
                     else:
-                        self.assertEqual(pv_cell, intcell)
+                        self.assertEqual(pv_cell, int_cell)
 
     def test_quads_loaded(self):
         q = ap.getElements('QUAD')
