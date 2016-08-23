@@ -9,6 +9,8 @@ _build/
 aphla.egg-info
 doc/generated
 doc/_build
+installed.files
+aphla/version.py
 
 # Temporary files
 *~
